@@ -23,14 +23,18 @@ class HomeCubit extends Cubit<HomeState> {
     final responseProducts = await productsService.getProducts();
     if (responseProducts.result is Success) {
       if (!isClosed) emit(HomeLoaded(products: responseProducts.products));
-    } else {
+    } else if (responseProducts.result is GeneralFailure) {
+        emit(HomeError(message: responseProducts.result.message ?? 'Erro Desconhecido'),);
+      } 
+    else {
       final error = responseProducts.result;
-      if (!isClosed)
+      if (!isClosed) {
         emit(HomeError(
           message: error is ConnectionFailure
               ? 'Verifique sua conexão'
               : error.message ?? 'Ocorreu um erro inesperado',
         ));
+      }
     }
   }
 
@@ -49,8 +53,9 @@ class HomeCubit extends Cubit<HomeState> {
               uploadResponse.imageUrl != null) {
             imageUrls.add(uploadResponse.imageUrl!);
           } else {
-            if (!isClosed)
+            if (!isClosed) {
               emit(HomeError(message: 'Erro ao fazer upload da imagem'));
+            }
             return;
           }
         }
@@ -67,13 +72,20 @@ class HomeCubit extends Cubit<HomeState> {
         if (!isClosed) emit(HomeProductCreated(product: response.product!));
         if (!isClosed) getHomeData(); // Recarregar a lista
       } else {
-        final error = response.result;
-        if (!isClosed)
-          emit(HomeError(
-            message: error is ConnectionFailure
-                ? 'Verifique sua conexão'
-                : 'Erro ao criar produto',
-          ));
+        if (response.result is GeneralFailure) {
+          emit(
+            HomeError(message: response.result.message ?? 'Erro desconhecido'),
+          );
+        } else {
+          final error = response.result;
+          if (!isClosed) {
+            emit(HomeError(
+              message: error is ConnectionFailure
+                  ? 'Verifique sua conexão'
+                  : 'Erro ao criar produto',
+            ));
+          }
+        }
       }
     } catch (e) {
       if (!isClosed) emit(HomeError(message: 'Erro inesperado: $e'));
@@ -95,8 +107,9 @@ class HomeCubit extends Cubit<HomeState> {
               uploadResponse.imageUrl != null) {
             imageUrls.add(uploadResponse.imageUrl!);
           } else {
-            if (!isClosed)
-              emit(HomeError(message: 'Erro ao fazer upload da imagem'));
+            if (!isClosed) {
+              emit(const HomeError(message: 'Erro ao fazer upload da imagem'));
+            }
             return;
           }
         }
@@ -117,14 +130,19 @@ class HomeCubit extends Cubit<HomeState> {
       if (response.result is Success) {
         if (!isClosed) emit(HomeProductUpdated(product: response.product!));
         if (!isClosed) getHomeData(); // Recarregar a lista
+      } else if (response.result is GeneralFailure) {
+        emit(
+          HomeError(message: response.result.message ?? 'Erro Desconhecido'),
+        );
       } else {
         final error = response.result;
-        if (!isClosed)
+        if (!isClosed) {
           emit(HomeError(
             message: error is ConnectionFailure
                 ? 'Verifique sua conexão'
                 : 'Erro ao atualizar produto',
           ));
+        }
       }
     } catch (e) {
       if (!isClosed) emit(HomeError(message: 'Erro inesperado: $e'));
@@ -139,14 +157,19 @@ class HomeCubit extends Cubit<HomeState> {
     if (response.result is Success) {
       if (!isClosed) emit(HomeProductDeleted());
       if (!isClosed) getHomeData(); // Recarregar a lista
+    } else if (response.result is GeneralFailure) {
+      emit(
+        HomeError(message: response.result.message ?? 'Erro Desconhecido'),
+      );
     } else {
       final error = response.result;
-      if (!isClosed)
+      if (!isClosed) {
         emit(HomeError(
           message: error is ConnectionFailure
               ? 'Verifique sua conexão'
               : 'Erro ao deletar produto',
         ));
+      }
     }
   }
 
@@ -157,14 +180,19 @@ class HomeCubit extends Cubit<HomeState> {
     final response = await productsService.getProduct(id);
     if (response.result is Success) {
       if (!isClosed) emit(HomeProductLoaded(product: response.product!));
+    } else if (response.result is GeneralFailure) {
+      emit(
+        HomeError(message: response.result.message ?? 'Erro Desconhecido'),
+      );
     } else {
       final error = response.result;
-      if (!isClosed)
+      if (!isClosed) {
         emit(HomeError(
           message: error is ConnectionFailure
               ? 'Verifique sua conexão'
               : 'Erro ao carregar produto',
         ));
+      }
     }
   }
 }
