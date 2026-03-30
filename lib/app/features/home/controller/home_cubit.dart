@@ -24,9 +24,11 @@ class HomeCubit extends Cubit<HomeState> {
     if (responseProducts.result is Success) {
       if (!isClosed) emit(HomeLoaded(products: responseProducts.products));
     } else if (responseProducts.result is GeneralFailure) {
-        emit(HomeError(message: responseProducts.result.message ?? 'Erro Desconhecido'),);
-      } 
-    else {
+      emit(
+        HomeError(
+            message: responseProducts.result.message ?? 'Erro Desconhecido'),
+      );
+    } else {
       final error = responseProducts.result;
       if (!isClosed) {
         emit(HomeError(
@@ -52,9 +54,15 @@ class HomeCubit extends Cubit<HomeState> {
           if (uploadResponse.result is Success &&
               uploadResponse.imageUrl != null) {
             imageUrls.add(uploadResponse.imageUrl!);
+          } else if (uploadResponse.result is GeneralFailure) {
+            emit(
+              HomeError(
+                  message:
+                      uploadResponse.result.message ?? 'Erro Desconhecido'),
+            );
           } else {
             if (!isClosed) {
-              emit(HomeError(message: 'Erro ao fazer upload da imagem'));
+              emit(const HomeError(message: 'Erro ao fazer upload da imagem'));
             }
             return;
           }
@@ -106,6 +114,12 @@ class HomeCubit extends Cubit<HomeState> {
           if (uploadResponse.result is Success &&
               uploadResponse.imageUrl != null) {
             imageUrls.add(uploadResponse.imageUrl!);
+          } else if (uploadResponse.result is GeneralFailure) {
+            emit(
+              HomeError(
+                  message:
+                      uploadResponse.result.message ?? 'Erro Desconhecido'),
+            );
           } else {
             if (!isClosed) {
               emit(const HomeError(message: 'Erro ao fazer upload da imagem'));

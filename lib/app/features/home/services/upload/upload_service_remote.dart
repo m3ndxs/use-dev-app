@@ -8,7 +8,8 @@ import 'package:dio/dio.dart' hide Response;
 class UploadServiceRemote implements UploadService {
   @override
   Future<({String? imageUrl, Response result})> uploadImage(File imageFile) async {
-    final form = FormData.fromMap({
+    try {
+      final form = FormData.fromMap({
       'file': await MultipartFile.fromFile(imageFile.path),
     });
     
@@ -18,6 +19,27 @@ class UploadServiceRemote implements UploadService {
     );
 
     return (imageUrl: result.data['location'] as String?, result: const Success());
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 400) {
+        return (
+          imageUrl: null,
+          result: const GeneralFailure(message: 'Erro nos dados enviados'),
+        );
+      } else if (e.response?.statusCode == 404) {
+        return (
+          imageUrl: null,
+          result: const GeneralFailure(message: 'Produto não encontrado'),
+        );
+      } else {
+        return (
+          imageUrl: null,
+          result: const GeneralFailure(message: 'Erro indefinido'),
+        );
+      }
+    } 
+    catch (e) {
+      return (imageUrl: null, result: const GeneralFailure());
+    }
   }
 
 }
