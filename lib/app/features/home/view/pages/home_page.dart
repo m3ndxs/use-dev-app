@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       appBar: const UseDevAppBar(),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _navigateToCreateProduct(context, null),
+        onPressed: () => _navigateToCreateProduct(context, context.read<Cubit>),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
