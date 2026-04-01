@@ -39,7 +39,7 @@ class UploadServiceMock implements UploadService {
       // Verifica se o arquivo existe (validação básica)
       if (!imageFile.existsSync()) {
         return (
-          result: GeneralFailure(message: 'Arquivo de imagem não encontrado'),
+          result: const GeneralFailure(message: 'Arquivo de imagem não encontrado'),
           imageUrl: null
         );
       }
@@ -65,7 +65,7 @@ class UploadServiceMock implements UploadService {
 
       if (fileSizeInBytes > maxSizeInBytes) {
         return (
-          result: GeneralFailure(
+          result: const GeneralFailure(
               message: 'Arquivo muito grande. Tamanho máximo: 5MB'),
           imageUrl: null
         );
@@ -81,22 +81,22 @@ class UploadServiceMock implements UploadService {
         final timestamp = DateTime.now().millisecondsSinceEpoch;
         final finalUrl = '$mockImageUrl&t=$timestamp';
 
-        return (result: Success(), imageUrl: finalUrl);
+        return (result: const Success(), imageUrl: finalUrl);
       } else {
         // Simula diferentes tipos de falha
         final failureType = Random().nextInt(3);
         switch (failureType) {
           case 0:
-            return (result: ConnectionFailure(), imageUrl: null);
+            return (result: const ConnectionFailure(), imageUrl: null);
           case 1:
             return (
               result:
-                  GeneralFailure(message: 'Erro no servidor durante upload'),
+                  const GeneralFailure(message: 'Erro no servidor durante upload'),
               imageUrl: null
             );
           default:
             return (
-              result: GeneralFailure(
+              result: const GeneralFailure(
                   message: 'Tempo limite excedido durante upload'),
               imageUrl: null
             );
@@ -146,7 +146,7 @@ class UploadServiceMock implements UploadService {
       }
     }
 
-    return (result: Success(), imageUrls: uploadedUrls);
+    return (result: const Success(), imageUrls: uploadedUrls);
   }
 
   /// Simula validação de arquivo antes do upload

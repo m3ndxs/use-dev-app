@@ -11,9 +11,9 @@ class ProductFormPage extends StatefulWidget {
   final ProductModel? product; // null para criar, preenchido para editar
 
   const ProductFormPage({
-    Key? key,
+    super.key,
     this.product,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductFormPage> createState() => _ProductFormPageState();
